@@ -1,23 +1,23 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
-    const { storeId, rating, title, review, name, email, source, submittedAt } =
+    const { storeId, rating, feedback, name, phone, email, source, submittedAt } =
       body;
 
-    if (!storeId || !rating || !review || !source || !submittedAt) {
+    if (!storeId || !rating || !feedback || !name || !phone || !email || !source || !submittedAt) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    if (rating < 1 || rating > 5) {
+    // Only accept 1-4 star reviews (5 stars are handled client-side)
+    if (rating < 1 || rating > 4) {
       return NextResponse.json(
-        { error: "Rating must be between 1 and 5" },
+        { error: "Rating must be between 1 and 4 for webhook submission" },
         { status: 400 }
       );
     }
@@ -29,37 +29,47 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data, error } = await supabase
-      .from("reviews")
-      .insert({
-        store_id: storeId,
-        rating,
-        title: title || "",
-        review,
-        customer_name: name || "",
-        customer_email: email || "",
-        location_source: source,
-        submitted_at: submittedAt,
-      })
-      .select()
-      .single();
+    // Get webhook endpoint from environment variable
+    const webhookUrl = process.env.WEBHOOK_ENDPOINT_URL;
 
-    if (error) {
-      console.error("Database error:", error);
+    if (!webhookUrl) {
+      console.error("WEBHOOK_ENDPOINT_URL environment variable is not set");
       return NextResponse.json(
-        { error: "Failed to save review" },
+        { error: "Webhook endpoint not configured" },
         { status: 500 }
       );
     }
 
-    console.log("Review submitted successfully:", {
-      id: data.id,
-      storeId: data.store_id,
-      rating: data.rating,
-      source: data.location_source,
+    // Prepare review data for webhook
+    const reviewData = {
+      storeId,
+      rating,
+      feedback,
+      name,
+      phone,
+      email,
+      submittedAt,
+    };
+
+    // Send to webhook endpoint
+    const webhookResponse = await fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(reviewData),
     });
 
-    return NextResponse.json({ success: true, reviewId: data.id });
+    if (!webhookResponse.ok) {
+      const errorText = await webhookResponse.text();
+      console.error("Webhook error:", errorText);
+      return NextResponse.json(
+        { error: "Failed to submit review to webhook" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Review submission error:", error);
     return NextResponse.json(

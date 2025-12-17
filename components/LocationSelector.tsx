@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { MapPin, Search } from "lucide-react";
+import { MapPin, Search, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,7 +21,10 @@ export interface Location {
   zip: string;
   lat: number;
   lng: number;
-  google_review_url: string;
+  googleReviewUrl: string;
+  googleReviewQrCode: string;
+  yelpAccount: string;
+  yelpReviewUrl: string;
 }
 
 interface LocationSelectorProps {
@@ -62,27 +65,34 @@ export function LocationSelector({
   return (
     <>
       <div className="space-y-2">
-        <div className="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
-          <MapPin className="w-5 h-5 text-emerald-600 mt-0.5 flex-shrink-0" />
+        <div className="flex items-start gap-3 p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
+          <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
+            <MapPin className="w-5 h-5 text-emerald-700" />
+          </div>
           <div className="flex-1 min-w-0">
             {selectedLocation ? (
               <>
-                <p className="text-sm text-emerald-800 font-medium mb-1">
-                  {isAutoDetected
-                    ? "We've selected the Well Greens location closest to you:"
-                    : "Selected location:"}
+                <p className="text-sm text-emerald-700 font-semibold mb-1 flex items-center gap-1">
+                  {isAutoDetected ? (
+                    <>
+                      <Sparkles className="w-3 h-3" />
+                      Nearest location found
+                    </>
+                  ) : (
+                    "Selected location:"
+                  )}
                 </p>
-                <p className="font-semibold text-gray-900">
+                <p className="font-bold text-gray-900 text-base mb-1">
                   {selectedLocation.name}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-700">
                   {selectedLocation.address}, {selectedLocation.city},{" "}
                   {selectedLocation.state} {selectedLocation.zip}
                 </p>
               </>
             ) : (
-              <p className="text-sm text-gray-600">
-                Please select your Well Greens location
+              <p className="text-sm text-slate-600 font-medium">
+                Please select your Wellgreens location
               </p>
             )}
           </div>
@@ -92,55 +102,68 @@ export function LocationSelector({
           type="button"
           variant="outline"
           onClick={() => setIsOpen(true)}
-          className="w-full"
+          className="w-full border-slate-200 text-slate-700 hover:bg-slate-50 font-medium h-10"
         >
           {selectedLocation ? "Change location" : "Select location"}
         </Button>
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
+        <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col border-slate-200">
           <DialogHeader>
-            <DialogTitle>Select Your Well Greens Location</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-emerald-600" />
+              Select Location
+            </DialogTitle>
+            <DialogDescription className="text-slate-500">
               Choose the store location where you'd like to leave a review
             </DialogDescription>
           </DialogHeader>
 
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <Input
               type="text"
               placeholder="Search by name, city, or ZIP code..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
+              className="pl-10 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-md h-11"
             />
           </div>
 
-          <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+          <div className="flex-1 overflow-y-auto space-y-3 pr-2">
             {filteredLocations.length > 0 ? (
               filteredLocations.map((location) => (
                 <button
                   key={location.id}
                   onClick={() => handleSelectLocation(location)}
-                  className="w-full text-left p-4 rounded-lg border border-gray-200 hover:border-emerald-500 hover:bg-emerald-50 transition-colors"
+                  className="w-full text-left p-4 rounded-lg border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition-colors"
                 >
-                  <p className="font-semibold text-gray-900">
-                    {location.name}
-                  </p>
-                  <p className="text-sm text-gray-600 mt-1">
-                    {location.address}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {location.city}, {location.state} {location.zip}
-                  </p>
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <MapPin className="w-4 h-4 text-emerald-600" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-slate-900 text-base mb-0.5">
+                        {location.name}
+                      </p>
+                      <p className="text-sm text-slate-600">
+                        {location.address}
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {location.city}, {location.state} {location.zip}
+                      </p>
+                    </div>
+                  </div>
                 </button>
               ))
             ) : (
-              <p className="text-center text-gray-500 py-8">
-                No locations found matching "{searchQuery}"
-              </p>
+              <div className="text-center py-12">
+                <p className="text-slate-500 text-base font-medium">
+                  No locations found matching "{searchQuery}"
+                </p>
+                <p className="text-sm text-slate-400 mt-1">Try a different search term</p>
+              </div>
             )}
           </div>
         </DialogContent>
