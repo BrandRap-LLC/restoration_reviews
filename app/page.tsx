@@ -373,22 +373,22 @@ export default function Home() {
       <div className="min-h-screen bg-slate-50 py-6 sm:py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
-          <div className="bg-[#274d27] px-4 sm:px-8 py-6 sm:py-10 text-white">
+          <div className="bg-[#274d27] px-4 sm:px-8 py-5 sm:py-10 text-white">
             <div className="text-center">
-              <div className="flex items-center justify-center mb-6">
-                <div className="bg-white rounded-xl p-2 sm:p-3">
+              <div className="flex items-center justify-center mb-4 sm:mb-6">
+                <div className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3">
                   <img
                     src="/images/logo.webp"
                     alt="Restoration Logistics Logo"
-                    className="h-12 sm:h-16 w-auto"
+                    className="h-10 sm:h-16 w-auto"
                   />
                 </div>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3 tracking-tight">
+              <h1 className="text-xl sm:text-3xl font-bold mb-1.5 sm:mb-3 tracking-tight">
                 Share Your Experience
               </h1>
-              <p className="text-white/80 text-base sm:text-lg max-w-lg mx-auto">
+              <p className="text-white/80 text-sm sm:text-lg max-w-lg mx-auto">
                 Your feedback helps us provide the best service to our community.
               </p>
             </div>

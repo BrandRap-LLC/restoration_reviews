@@ -67,15 +67,15 @@ export function LocationSelector({
   return (
     <>
       <div className="space-y-2">
-        <div className="flex items-start gap-3 p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-            <MapPin className="w-5 h-5 text-primary" />
+        <div className="flex items-start gap-3 p-3 sm:p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
           </div>
           <div className="flex-1 min-w-0">
             {selectedLocation ? (
               <>
-                <div className="flex items-center gap-2 mb-2">
-                  <p className="text-sm text-primary font-semibold flex items-center gap-1">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 mb-1.5 sm:mb-2">
+                  <p className="text-xs sm:text-sm text-primary font-semibold flex items-center gap-1">
                     {isAutoDetected ? (
                       <>
                         <Sparkles className="w-3 h-3" />
@@ -86,21 +86,23 @@ export function LocationSelector({
                     )}
                   </p>
                   {isAutoDetected && (
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-[#274d27]/10 text-[#274d27] font-medium">
-                      {locationSource === "ip" ? "📍 Detected via IP" : locationSource === "gps" ? "📍 Detected via GPS" : ""}
+                    <span className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full bg-[#274d27]/10 text-[#274d27] font-medium w-fit whitespace-nowrap">
+                      {locationSource === "ip" ? "📍 via IP" : locationSource === "gps" ? "📍 via GPS" : ""}
                     </span>
                   )}
                 </div>
-                <p className="font-bold text-foreground text-base mb-1">
+                <p className="font-bold text-foreground text-sm sm:text-base mb-0.5 sm:mb-1">
                   {selectedLocation.name}
                 </p>
-                <p className="text-sm text-muted-foreground">
-                  {selectedLocation.address}, {selectedLocation.city},{" "}
-                  {selectedLocation.state} {selectedLocation.zip}
+                <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed">
+                  {selectedLocation.address}
+                  <br className="sm:hidden" />
+                  <span className="hidden sm:inline">, </span>
+                  {selectedLocation.city}, {selectedLocation.state} {selectedLocation.zip}
                 </p>
               </>
             ) : (
-              <p className="text-sm text-muted-foreground font-medium">
+              <p className="text-xs sm:text-sm text-muted-foreground font-medium">
                 Please select your Restoration Logistics location
               </p>
             )}
