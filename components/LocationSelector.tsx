@@ -66,13 +66,13 @@ export function LocationSelector({
     <>
       <div className="space-y-2">
         <div className="flex items-start gap-3 p-4 bg-white border border-slate-200 rounded-lg shadow-sm">
-          <div className="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0">
-            <MapPin className="w-5 h-5 text-emerald-700" />
+          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+            <MapPin className="w-5 h-5 text-primary" />
           </div>
           <div className="flex-1 min-w-0">
             {selectedLocation ? (
               <>
-                <p className="text-sm text-emerald-700 font-semibold mb-1 flex items-center gap-1">
+                <p className="text-sm text-primary font-semibold mb-1 flex items-center gap-1">
                   {isAutoDetected ? (
                     <>
                       <Sparkles className="w-3 h-3" />
@@ -82,17 +82,17 @@ export function LocationSelector({
                     "Selected location:"
                   )}
                 </p>
-                <p className="font-bold text-gray-900 text-base mb-1">
+                <p className="font-bold text-foreground text-base mb-1">
                   {selectedLocation.name}
                 </p>
-                <p className="text-sm text-gray-700">
+                <p className="text-sm text-muted-foreground">
                   {selectedLocation.address}, {selectedLocation.city},{" "}
                   {selectedLocation.state} {selectedLocation.zip}
                 </p>
               </>
             ) : (
-              <p className="text-sm text-slate-600 font-medium">
-                Please select your Wellgreens location
+              <p className="text-sm text-muted-foreground font-medium">
+                Please select your Restoration Logistics location
               </p>
             )}
           </div>
@@ -102,7 +102,7 @@ export function LocationSelector({
           type="button"
           variant="outline"
           onClick={() => setIsOpen(true)}
-          className="w-full border-slate-200 text-slate-700 hover:bg-slate-50 font-medium h-10"
+          className="w-full border-slate-200 text-foreground hover:bg-[#274d27]/10 hover:text-foreground font-medium h-10"
         >
           {selectedLocation ? "Change location" : "Select location"}
         </Button>
@@ -111,23 +111,23 @@ export function LocationSelector({
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col border-slate-200">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-slate-900 flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-emerald-600" />
+            <DialogTitle className="text-xl font-bold text-foreground flex items-center gap-2">
+              <MapPin className="w-5 h-5 text-primary" />
               Select Location
             </DialogTitle>
-            <DialogDescription className="text-slate-500">
+            <DialogDescription className="text-muted-foreground">
               Choose the store location where you'd like to leave a review
             </DialogDescription>
           </DialogHeader>
 
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               type="text"
               placeholder="Search by name, city, or ZIP code..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-md h-11"
+              className="pl-10 border-slate-200 focus:border-[#274d27] focus:ring-[#274d27] rounded-md h-11"
             />
           </div>
 
@@ -137,20 +137,20 @@ export function LocationSelector({
                 <button
                   key={location.id}
                   onClick={() => handleSelectLocation(location)}
-                  className="w-full text-left p-4 rounded-lg border border-slate-200 hover:border-emerald-500 hover:bg-emerald-50/50 transition-colors"
+                  className="w-full text-left p-4 rounded-lg border border-slate-200 hover:border-primary hover:bg-primary/5 transition-colors"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-emerald-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <MapPin className="w-4 h-4 text-emerald-600" />
+                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <MapPin className="w-4 h-4 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-semibold text-slate-900 text-base mb-0.5">
+                      <p className="font-semibold text-foreground text-base mb-0.5">
                         {location.name}
                       </p>
-                      <p className="text-sm text-slate-600">
+                      <p className="text-sm text-muted-foreground">
                         {location.address}
                       </p>
-                      <p className="text-sm text-gray-600 mt-1">
+                      <p className="text-sm text-muted-foreground mt-1">
                         {location.city}, {location.state} {location.zip}
                       </p>
                     </div>
@@ -159,10 +159,10 @@ export function LocationSelector({
               ))
             ) : (
               <div className="text-center py-12">
-                <p className="text-slate-500 text-base font-medium">
+                <p className="text-muted-foreground text-base font-medium">
                   No locations found matching "{searchQuery}"
                 </p>
-                <p className="text-sm text-slate-400 mt-1">Try a different search term</p>
+                <p className="text-sm text-muted-foreground/70 mt-1">Try a different search term</p>
               </div>
             )}
           </div>

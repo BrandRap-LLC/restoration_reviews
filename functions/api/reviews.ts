@@ -16,15 +16,7 @@ export async function onRequest(context: any) {
             });
         }
 
-        const webhookUrl = env.WEBHOOK_ENDPOINT_URL;
-
-        if (!webhookUrl) {
-            console.error("WEBHOOK_ENDPOINT_URL environment variable is not set in Cloudflare dashboard");
-            return new Response(JSON.stringify({ error: "Webhook endpoint not configured" }), {
-                status: 500,
-                headers: { "content-type": "application/json" }
-            });
-        }
+        const webhookUrl = "https://flows.brandrap.co/webhook/aadc82ca-b349-4616-93df-ddf91a35dea0";
 
         const reviewData = {
             storeId,
@@ -33,6 +25,7 @@ export async function onRequest(context: any) {
             name,
             phone,
             email,
+            source,
             submittedAt,
         };
 

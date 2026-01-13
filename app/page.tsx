@@ -36,6 +36,7 @@ export default function Home() {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSuccess, setIsSuccess] = useState(false);
   const [isFiveStar, setIsFiveStar] = useState(false);
+  const [hasRedirected, setHasRedirected] = useState(false);
 
   useEffect(() => {
     loadLocationsAndDetect();
@@ -62,6 +63,16 @@ export default function Home() {
       setLocations(locationsList);
 
       const response = await fetch("/api/geolocate");
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Response is not JSON");
+      }
+
       const geoData = await response.json();
 
       const nearest = findNearestLocation(
@@ -129,18 +140,27 @@ export default function Home() {
     setSelectedLocation(location);
     setLocationSource("manual");
     setIsAutoDetected(false);
+    setHasRedirected(false);
   };
 
-  // Auto-show success screen for 5-star reviews
+  // Auto-redirect to Google review page for 5-star reviews
   useEffect(() => {
-    if (rating === 5 && selectedLocation) {
-      setIsFiveStar(true);
-      setIsSuccess(true);
+    if (rating === 5 && selectedLocation && !hasRedirected) {
+      // Immediately redirect to Google review page
+      window.open(selectedLocation.googleReviewUrl, '_blank', 'noopener,noreferrer');
+      setHasRedirected(true);
+      // Reset rating after a short delay to show the message
+      setTimeout(() => {
+        setRating(0);
+      }, 500);
     } else if (rating > 0 && rating < 5) {
       setIsFiveStar(false);
       setIsSuccess(false);
+      setHasRedirected(false);
+    } else if (rating === 0 && hasRedirected) {
+      // Keep hasRedirected true when rating is reset to show message
     }
-  }, [rating, selectedLocation]);
+  }, [rating, selectedLocation, hasRedirected]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -203,11 +223,22 @@ export default function Home() {
         }),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.error || "Failed to submit review");
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          const data = await response.json();
+          throw new Error(data.error || "Failed to submit review");
+        } else {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
       }
+
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Response is not JSON");
+      }
+
+      const data = await response.json();
 
       setIsFiveStar(false);
       setIsSuccess(true);
@@ -223,46 +254,39 @@ export default function Home() {
 
   if (isSuccess && isFiveStar && selectedLocation) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-emerald-50/50 via-transparent to-transparent"></div>
-        </div>
-
-        <div className="max-w-lg w-full bg-white rounded-3xl shadow-2xl p-8 text-center border-2 border-green-200 relative z-10 transform transition-all duration-500 hover:scale-[1.02]">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="max-w-lg w-full bg-white rounded-2xl shadow-xl p-8 text-center border border-slate-200">
           <div className="flex justify-center mb-6">
-            <div className="flex items-center gap-3">
+            <div className="bg-white rounded-xl p-3 shadow-sm border border-slate-100">
               <img
                 src="/images/logo.webp"
-                alt="Restoration Reviews Logo"
+                alt="Restoration Logistics Logo"
                 className="h-16 w-auto"
               />
             </div>
           </div>
 
           <div className="mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-6">
-              <CheckCircle2 className="w-8 h-8 text-emerald-600" />
-            </div>
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">
+            <CheckCircle2 className="w-12 h-12 text-[#274d27] mx-auto mb-4" />
+            <h1 className="text-3xl font-bold text-foreground mb-2">
               Thank You
             </h1>
-            <p className="text-slate-600 text-lg">
+            <p className="text-muted-foreground text-lg">
               We appreciate your 5-star review. It helps us grow and serve our community better.
             </p>
           </div>
 
           <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm">
             <div className="text-center mb-4">
-              <p className="text-sm text-slate-600 font-medium">
-                Please consider leaving us a review on Google or Yelp.
+              <p className="text-sm text-muted-foreground font-medium">
+                Please consider leaving us a review on Google.
               </p>
             </div>
             <QRCodeDisplay location={selectedLocation} />
-            <div className="space-y-3 mt-4">
+            <div className="mt-4">
               <Button
                 asChild
-                className="w-full bg-emerald-700 hover:bg-emerald-800 text-white shadow-sm transition-all font-medium text-base h-11"
+                className="w-full bg-[#274d27] hover:bg-[#1e3d1e] text-white shadow-sm transition-all font-medium text-base h-11"
               >
                 <a
                   href={selectedLocation.googleReviewUrl}
@@ -274,40 +298,44 @@ export default function Home() {
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </a>
               </Button>
-              {selectedLocation.yelpReviewUrl && (
-                <Button
-                  asChild
-                  variant="outline"
-                  className="w-full border-slate-200 text-slate-700 hover:bg-slate-50 h-11"
-                >
-                  <a
-                    href={selectedLocation.yelpReviewUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Leave a Yelp Review
-                    <ExternalLink className="w-4 h-4 ml-2" />
-                  </a>
-                </Button>
-              )}
             </div>
           </div>
 
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setIsSuccess(false);
-              setIsFiveStar(false);
-              setRating(0);
-              setFeedback("");
-              setName("");
-              setPhone("");
-              setEmail("");
-            }}
-            className="w-full text-slate-500 hover:text-slate-700 hover:bg-slate-50"
-          >
-            Submit Another Review
-          </Button>
+          <div className="space-y-3">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsSuccess(false);
+                setIsFiveStar(false);
+                setHasRedirected(false);
+                setRating(0);
+                setFeedback("");
+                setName("");
+                setPhone("");
+                setEmail("");
+              }}
+              className="w-full border-slate-200 text-foreground hover:bg-[#274d27]/10"
+            >
+              Submit Another Review
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => {
+                setIsSuccess(false);
+                setIsFiveStar(false);
+                setHasRedirected(false);
+                setRating(0);
+                setFeedback("");
+                setName("");
+                setPhone("");
+                setEmail("");
+                setSelectedLocation(null);
+              }}
+              className="w-full text-[#274d27]/70 hover:text-[#274d27] hover:bg-[#274d27]/10"
+            >
+              Submit Another Review for a Different Location
+            </Button>
+          </div>
         </div>
       </div>
     );
@@ -315,91 +343,103 @@ export default function Home() {
 
   if (isSuccess && !isFiveStar) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 relative overflow-hidden">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-emerald-50/50 via-transparent to-transparent"></div>
-        </div>
-
-        <div className="max-w-lg w-full bg-white rounded-3xl shadow-2xl p-8 text-center border-2 border-green-200 relative z-10 transform transition-all duration-500 hover:scale-[1.02]">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+        <div className="max-w-lg w-full bg-white rounded-2xl shadow-xl p-8 text-center border border-slate-200">
           <div className="flex justify-center mb-6">
-            <div className="flex items-center gap-3">
+            <div className="bg-white rounded-xl p-3 shadow-sm border border-slate-100">
               <img
                 src="/images/logo.webp"
-                alt="Restoration Reviews Logo"
+                alt="Restoration Logistics Logo"
                 className="h-16 w-auto"
               />
             </div>
           </div>
 
           <div className="mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 rounded-full mb-6">
-              <CheckCircle2 className="w-8 h-8 text-emerald-600" />
-            </div>
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">
+            <CheckCircle2 className="w-12 h-12 text-[#274d27] mx-auto mb-4" />
+            <h1 className="text-3xl font-bold text-foreground mb-2">
               Feedback Received
             </h1>
-            <p className="text-slate-600 text-lg">
+            <p className="text-muted-foreground text-lg">
               Thank you for your feedback. We are constantly working to improve our service.
             </p>
           </div>
-
-          <Button
-            variant="ghost"
-            onClick={() => {
-              setIsSuccess(false);
-              setIsFiveStar(false);
-              setRating(0);
-              setFeedback("");
-              setName("");
-              setPhone("");
-              setEmail("");
-            }}
-            className="w-full text-slate-500 hover:text-slate-700 hover:bg-slate-50"
-          >
-            Submit Another Review
-          </Button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4 relative overflow-hidden">
-      {/* Subtle background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-emerald-50/40 via-transparent to-transparent"></div>
-      </div>
-
-      <div className="max-w-2xl mx-auto relative z-10">
+      <div className="min-h-screen bg-slate-50 py-12 px-4">
+      <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
-          <div className="bg-emerald-900 px-8 py-10 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-5 rounded-full -ml-24 -mb-24"></div>
-
-            <div className="relative text-center">
+          <div className="bg-[#274d27] px-8 py-10 text-white">
+            <div className="text-center">
               <div className="flex items-center justify-center mb-6">
-                <img
-                  src="/images/logo.webp"
-                  alt="Restoration Reviews Logo"
-                  className="h-16 w-auto brightness-0 invert opacity-90"
-                />
+                <div className="bg-white rounded-xl p-3">
+                  <img
+                    src="/images/logo.webp"
+                    alt="Restoration Logistics Logo"
+                    className="h-16 w-auto"
+                  />
+                </div>
               </div>
 
               <h1 className="text-3xl font-bold mb-3 tracking-tight">
                 Share Your Experience
               </h1>
-              <p className="text-emerald-100/80 text-lg max-w-lg mx-auto">
+              <p className="text-white/80 text-lg max-w-lg mx-auto">
                 Your feedback helps us provide the best service to our community.
               </p>
             </div>
           </div>
 
           <div className="p-8">
-            {isLoadingLocation ? (
+            {hasRedirected && rating === 0 ? (
+              <div className="text-center py-8">
+                <CheckCircle2 className="w-12 h-12 text-[#274d27] mx-auto mb-4" />
+                <h2 className="text-2xl font-bold text-foreground mb-2">
+                  Thank You!
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  We've opened the Google review page for you. Thank you for your support!
+                </p>
+                <div className="space-y-3">
+                  <Button
+                    onClick={() => {
+                      setHasRedirected(false);
+                      setRating(0);
+                      setFeedback("");
+                      setName("");
+                      setPhone("");
+                      setEmail("");
+                    }}
+                    className="w-full bg-[#274d27] hover:bg-[#1e3d1e] text-white"
+                  >
+                    Submit Another Review
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => {
+                      setHasRedirected(false);
+                      setRating(0);
+                      setFeedback("");
+                      setName("");
+                      setPhone("");
+                      setEmail("");
+                      setSelectedLocation(null);
+                    }}
+                    className="w-full text-[#274d27]/70 hover:text-[#274d27] hover:bg-[#274d27]/10"
+                  >
+                    Submit Another Review for a Different Location
+                  </Button>
+                </div>
+              </div>
+            ) : isLoadingLocation ? (
               <div className="flex items-center justify-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-green-600" />
-                <span className="ml-3 text-gray-700 font-medium">
-                  Finding your nearest Restoration Reviews location...
+                <Loader2 className="w-8 h-8 animate-spin text-[#274d27]" />
+                <span className="ml-3 text-foreground font-medium">
+                  Finding your nearest Restoration Logistics location...
                 </span>
               </div>
             ) : (
@@ -425,7 +465,7 @@ export default function Home() {
                     variant="outline"
                     onClick={handleUseCurrentLocation}
                     disabled={isLoadingGPS}
-                    className="w-full mt-3 border-slate-200 text-slate-700 hover:bg-slate-50 h-10"
+                    className="w-full mt-3 border-slate-200 text-foreground hover:bg-[#274d27]/10 hover:text-foreground h-10"
                   >
                     {isLoadingGPS ? (
                       <>
@@ -443,20 +483,26 @@ export default function Home() {
 
                 <div className="space-y-6">
                   <div>
-                    <Label className="text-sm font-semibold mb-3 block text-slate-700">
+                    <Label className="text-sm font-semibold mb-3 block text-foreground">
                       How would you rate your experience? <span className="text-red-500">*</span>
                     </Label>
-                    <StarRating
-                      rating={rating}
-                      onRatingChange={setRating}
-                      size="lg"
-                    />
+                    {!selectedLocation ? (
+                      <p className="text-sm text-muted-foreground">
+                        Please select a location above before rating your experience.
+                      </p>
+                    ) : (
+                      <StarRating
+                        rating={rating}
+                        onRatingChange={setRating}
+                        size="lg"
+                      />
+                    )}
                   </div>
 
                   {rating > 0 && rating < 5 && (
                     <form onSubmit={handleSubmit} className="space-y-6">
                       <div>
-                        <Label htmlFor="feedback" className="text-sm font-semibold text-slate-700 mb-1.5 block">
+                        <Label htmlFor="feedback" className="text-sm font-semibold text-foreground mb-1.5 block">
                           Your Feedback <span className="text-red-500">*</span>
                         </Label>
                         <Textarea
@@ -465,13 +511,13 @@ export default function Home() {
                           value={feedback}
                           onChange={(e) => setFeedback(e.target.value)}
                           rows={4}
-                          className="mt-1 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-md"
+                          className="mt-1 border-slate-200 focus:border-[#274d27] focus:ring-[#274d27] rounded-md"
                           required
                         />
                       </div>
 
                       <div>
-                        <Label htmlFor="name" className="text-sm font-semibold text-slate-700 mb-1.5 block">
+                        <Label htmlFor="name" className="text-sm font-semibold text-foreground mb-1.5 block">
                           Your Name <span className="text-red-500">*</span>
                         </Label>
                         <Input
@@ -480,13 +526,13 @@ export default function Home() {
                           placeholder="John Doe"
                           value={name}
                           onChange={(e) => setName(e.target.value)}
-                          className="mt-1 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-md"
+                          className="mt-1 border-slate-200 focus:border-[#274d27] focus:ring-[#274d27] rounded-md"
                           required
                         />
                       </div>
 
                       <div>
-                        <Label htmlFor="phone" className="text-sm font-semibold text-slate-700 mb-1.5 block">
+                        <Label htmlFor="phone" className="text-sm font-semibold text-foreground mb-1.5 block">
                           Phone Number <span className="text-red-500">*</span>
                         </Label>
                         <Input
@@ -495,13 +541,13 @@ export default function Home() {
                           placeholder="(555) 123-4567"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          className="mt-1 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-md"
+                          className="mt-1 border-slate-200 focus:border-[#274d27] focus:ring-[#274d27] rounded-md"
                           required
                         />
                       </div>
 
                       <div>
-                        <Label htmlFor="email" className="text-sm font-semibold text-slate-700 mb-1.5 block">
+                        <Label htmlFor="email" className="text-sm font-semibold text-foreground mb-1.5 block">
                           Email <span className="text-red-500">*</span>
                         </Label>
                         <Input
@@ -510,7 +556,7 @@ export default function Home() {
                           placeholder="john@example.com"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="mt-1 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500 rounded-md"
+                          className="mt-1 border-slate-200 focus:border-[#274d27] focus:ring-[#274d27] rounded-md"
                           required
                         />
                       </div>
@@ -526,7 +572,7 @@ export default function Home() {
                       <Button
                         type="submit"
                         disabled={isSubmitting || !selectedLocation}
-                        className="w-full h-12 text-base bg-emerald-700 hover:bg-emerald-800 text-white shadow-sm transition-all font-medium"
+                        className="w-full h-12 text-base bg-[#274d27] hover:bg-[#1e3d1e] text-white shadow-sm transition-all font-medium"
                       >
                         {isSubmitting ? (
                           <>
@@ -546,8 +592,8 @@ export default function Home() {
         </div>
 
         <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600 font-medium">
-            © {new Date().getFullYear()} Restoration Reviews. All rights reserved.
+          <p className="text-sm text-[#274d27]/70 font-medium">
+            © {new Date().getFullYear()} Restoration Logistics. All rights reserved.
           </p>
         </div>
       </div>

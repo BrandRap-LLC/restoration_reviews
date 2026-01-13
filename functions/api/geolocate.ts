@@ -22,7 +22,7 @@ export async function onRequest(context: any) {
             lat: 37.7749,
             lng: -122.4194,
             city: "San Francisco",
-            region: "CA",
+            region: "",
             source: "ip",
         }), {
             headers: { "content-type": "application/json" }
@@ -32,7 +32,7 @@ export async function onRequest(context: any) {
             lat: 37.7749,
             lng: -122.4194,
             city: "San Francisco",
-            region: "CA",
+            region: "",
             source: "ip",
         }), {
             headers: { "content-type": "application/json" }
