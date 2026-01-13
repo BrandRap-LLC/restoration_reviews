@@ -233,8 +233,8 @@ export default function Home() {
           <div className="flex justify-center mb-6">
             <div className="flex items-center gap-3">
               <img
-                src="/images/wellgreens-logo-dark-green.svg"
-                alt="Wellgreens Logo"
+                src="/images/logo.webp"
+                alt="Restoration Reviews Logo"
                 className="h-16 w-auto"
               />
             </div>
@@ -324,8 +324,8 @@ export default function Home() {
           <div className="flex justify-center mb-6">
             <div className="flex items-center gap-3">
               <img
-                src="/images/wellgreens-logo-dark-green.svg"
-                alt="Wellgreens Logo"
+                src="/images/logo.webp"
+                alt="Restoration Reviews Logo"
                 className="h-16 w-auto"
               />
             </div>
@@ -379,8 +379,8 @@ export default function Home() {
             <div className="relative text-center">
               <div className="flex items-center justify-center mb-6">
                 <img
-                  src="/images/wellgreens-logo-green.avif"
-                  alt="Wellgreens Logo"
+                  src="/images/logo.webp"
+                  alt="Restoration Reviews Logo"
                   className="h-16 w-auto brightness-0 invert opacity-90"
                 />
               </div>
@@ -399,7 +399,7 @@ export default function Home() {
               <div className="flex items-center justify-center py-12">
                 <Loader2 className="w-8 h-8 animate-spin text-green-600" />
                 <span className="ml-3 text-gray-700 font-medium">
-                  🔍 Finding your nearest Wellgreens location...
+                  Finding your nearest Restoration Reviews location...
                 </span>
               </div>
             ) : (
@@ -547,7 +547,7 @@ export default function Home() {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600 font-medium">
-            © {new Date().getFullYear()} Wellgreens. All rights reserved.
+            © {new Date().getFullYear()} Restoration Reviews. All rights reserved.
           </p>
         </div>
       </div>
