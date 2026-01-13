@@ -458,6 +458,7 @@ export default function Home() {
                     selectedLocation={selectedLocation}
                     onLocationSelect={handleLocationSelect}
                     isAutoDetected={isAutoDetected}
+                    locationSource={locationSource}
                   />
 
                   <Button

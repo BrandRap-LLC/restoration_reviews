@@ -32,6 +32,7 @@ interface LocationSelectorProps {
   selectedLocation: Location | null;
   onLocationSelect: (location: Location) => void;
   isAutoDetected?: boolean;
+  locationSource?: "ip" | "gps" | "manual";
 }
 
 export function LocationSelector({
@@ -39,6 +40,7 @@ export function LocationSelector({
   selectedLocation,
   onLocationSelect,
   isAutoDetected = false,
+  locationSource = "manual",
 }: LocationSelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -72,16 +74,23 @@ export function LocationSelector({
           <div className="flex-1 min-w-0">
             {selectedLocation ? (
               <>
-                <p className="text-sm text-primary font-semibold mb-1 flex items-center gap-1">
-                  {isAutoDetected ? (
-                    <>
-                      <Sparkles className="w-3 h-3" />
-                      Nearest location found
-                    </>
-                  ) : (
-                    "Selected location:"
+                <div className="flex items-center gap-2 mb-2">
+                  <p className="text-sm text-primary font-semibold flex items-center gap-1">
+                    {isAutoDetected ? (
+                      <>
+                        <Sparkles className="w-3 h-3" />
+                        Nearest location found
+                      </>
+                    ) : (
+                      "Selected location:"
+                    )}
+                  </p>
+                  {isAutoDetected && (
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-[#274d27]/10 text-[#274d27] font-medium">
+                      {locationSource === "ip" ? "📍 Detected via IP" : locationSource === "gps" ? "📍 Detected via GPS" : ""}
+                    </span>
                   )}
-                </p>
+                </div>
                 <p className="font-bold text-foreground text-base mb-1">
                   {selectedLocation.name}
                 </p>
