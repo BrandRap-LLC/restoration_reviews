@@ -255,28 +255,28 @@ export default function Home() {
   if (isSuccess && isFiveStar && selectedLocation) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="max-w-lg w-full bg-white rounded-2xl shadow-xl p-8 text-center border border-slate-200">
-          <div className="flex justify-center mb-6">
-            <div className="bg-white rounded-xl p-3 shadow-sm border border-slate-100">
+        <div className="max-w-lg w-full bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 text-center border border-slate-200">
+          <div className="flex justify-center mb-4 sm:mb-6">
+            <div className="bg-white rounded-xl p-2 sm:p-3 shadow-sm border border-slate-100">
               <img
                 src="/images/logo.webp"
                 alt="Restoration Logistics Logo"
-                className="h-16 w-auto"
+                className="h-12 sm:h-16 w-auto"
               />
             </div>
           </div>
 
-          <div className="mb-8">
-            <CheckCircle2 className="w-12 h-12 text-[#274d27] mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-foreground mb-2">
+          <div className="mb-6 sm:mb-8">
+            <CheckCircle2 className="w-10 h-10 sm:w-12 sm:h-12 text-[#274d27] mx-auto mb-3 sm:mb-4" />
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
               Thank You
             </h1>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-muted-foreground text-base sm:text-lg">
               We appreciate your 5-star review. It helps us grow and serve our community better.
             </p>
           </div>
 
-          <div className="bg-white border border-slate-200 rounded-xl p-6 mb-6 shadow-sm">
+          <div className="bg-white border border-slate-200 rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 shadow-sm">
             <div className="text-center mb-4">
               <p className="text-sm text-muted-foreground font-medium">
                 Please consider leaving us a review on Google.
@@ -344,23 +344,23 @@ export default function Home() {
   if (isSuccess && !isFiveStar) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="max-w-lg w-full bg-white rounded-2xl shadow-xl p-8 text-center border border-slate-200">
-          <div className="flex justify-center mb-6">
-            <div className="bg-white rounded-xl p-3 shadow-sm border border-slate-100">
+        <div className="max-w-lg w-full bg-white rounded-2xl shadow-xl p-4 sm:p-6 md:p-8 text-center border border-slate-200">
+          <div className="flex justify-center mb-4 sm:mb-6">
+            <div className="bg-white rounded-xl p-2 sm:p-3 shadow-sm border border-slate-100">
               <img
                 src="/images/logo.webp"
                 alt="Restoration Logistics Logo"
-                className="h-16 w-auto"
+                className="h-12 sm:h-16 w-auto"
               />
             </div>
           </div>
 
-          <div className="mb-8">
-            <CheckCircle2 className="w-12 h-12 text-[#274d27] mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-foreground mb-2">
+          <div className="mb-6 sm:mb-8">
+            <CheckCircle2 className="w-10 h-10 sm:w-12 sm:h-12 text-[#274d27] mx-auto mb-3 sm:mb-4" />
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
               Feedback Received
             </h1>
-            <p className="text-muted-foreground text-lg">
+            <p className="text-muted-foreground text-base sm:text-lg">
               Thank you for your feedback. We are constantly working to improve our service.
             </p>
           </div>
@@ -370,35 +370,35 @@ export default function Home() {
   }
 
   return (
-      <div className="min-h-screen bg-slate-50 py-12 px-4">
+      <div className="min-h-screen bg-slate-50 py-6 sm:py-12 px-4">
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
-          <div className="bg-[#274d27] px-8 py-10 text-white">
+          <div className="bg-[#274d27] px-4 sm:px-8 py-6 sm:py-10 text-white">
             <div className="text-center">
               <div className="flex items-center justify-center mb-6">
-                <div className="bg-white rounded-xl p-3">
+                <div className="bg-white rounded-xl p-2 sm:p-3">
                   <img
                     src="/images/logo.webp"
                     alt="Restoration Logistics Logo"
-                    className="h-16 w-auto"
+                    className="h-12 sm:h-16 w-auto"
                   />
                 </div>
               </div>
 
-              <h1 className="text-3xl font-bold mb-3 tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-bold mb-2 sm:mb-3 tracking-tight">
                 Share Your Experience
               </h1>
-              <p className="text-white/80 text-lg max-w-lg mx-auto">
+              <p className="text-white/80 text-base sm:text-lg max-w-lg mx-auto">
                 Your feedback helps us provide the best service to our community.
               </p>
             </div>
           </div>
 
-          <div className="p-8">
+          <div className="p-4 sm:p-6 md:p-8">
             {hasRedirected && rating === 0 ? (
-              <div className="text-center py-8">
-                <CheckCircle2 className="w-12 h-12 text-[#274d27] mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-foreground mb-2">
+              <div className="text-center py-6 sm:py-8">
+                <CheckCircle2 className="w-10 h-10 sm:w-12 sm:h-12 text-[#274d27] mx-auto mb-3 sm:mb-4" />
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">
                   Thank You!
                 </h2>
                 <p className="text-muted-foreground mb-6">
@@ -436,9 +436,9 @@ export default function Home() {
                 </div>
               </div>
             ) : isLoadingLocation ? (
-              <div className="flex items-center justify-center py-12">
+              <div className="flex flex-col sm:flex-row items-center justify-center py-8 sm:py-12 gap-3 sm:gap-0">
                 <Loader2 className="w-8 h-8 animate-spin text-[#274d27]" />
-                <span className="ml-3 text-foreground font-medium">
+                <span className="sm:ml-3 text-foreground font-medium text-center sm:text-left">
                   Finding your nearest Restoration Logistics location...
                 </span>
               </div>

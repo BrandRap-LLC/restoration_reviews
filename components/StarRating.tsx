@@ -17,9 +17,9 @@ export function StarRating({
   size = "md",
 }: StarRatingProps) {
   const sizeClasses = {
-    sm: "w-4 h-4",
-    md: "w-6 h-6",
-    lg: "w-8 h-8",
+    sm: "w-5 h-5",
+    md: "w-7 h-7",
+    lg: "w-10 h-10 sm:w-11 sm:h-11",
   };
 
   const handleClick = (index: number) => {
@@ -29,7 +29,7 @@ export function StarRating({
   };
 
   return (
-    <div className="flex gap-1">
+    <div className="flex gap-2 sm:gap-3">
       {[...Array(5)].map((_, index) => (
         <button
           key={index}
@@ -37,7 +37,7 @@ export function StarRating({
           onClick={() => handleClick(index)}
           disabled={readonly}
           className={cn(
-            "transition-all",
+            "transition-all p-1 sm:p-1.5 -m-1 sm:-m-1.5",
             !readonly && "hover:scale-110 cursor-pointer",
             readonly && "cursor-default"
           )}

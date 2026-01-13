@@ -118,9 +118,9 @@ export function LocationSelector({
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col border-slate-200">
+        <DialogContent className="w-[calc(100vw-2rem)] sm:w-full max-w-2xl max-h-[85vh] sm:max-h-[80vh] flex flex-col border-slate-200">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-foreground flex items-center gap-2">
+            <DialogTitle className="text-lg sm:text-xl font-bold text-foreground flex items-center gap-2">
               <MapPin className="w-5 h-5 text-primary" />
               Select Location
             </DialogTitle>
@@ -146,11 +146,11 @@ export function LocationSelector({
                 <button
                   key={location.id}
                   onClick={() => handleSelectLocation(location)}
-                  className="w-full text-left p-4 rounded-lg border border-slate-200 hover:border-primary hover:bg-primary/5 transition-colors"
+                  className="w-full text-left p-3 sm:p-4 rounded-lg border border-slate-200 hover:border-primary hover:bg-primary/5 transition-colors"
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <MapPin className="w-4 h-4 text-primary" />
+                  <div className="flex items-start gap-2 sm:gap-3">
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <MapPin className="w-3 h-3 sm:w-4 sm:h-4 text-primary" />
                     </div>
                     <div className="flex-1">
                       <p className="font-semibold text-foreground text-base mb-0.5">
@@ -167,11 +167,11 @@ export function LocationSelector({
                 </button>
               ))
             ) : (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground text-base font-medium">
+              <div className="text-center py-8 sm:py-12">
+                <p className="text-muted-foreground text-sm sm:text-base font-medium">
                   No locations found matching "{searchQuery}"
                 </p>
-                <p className="text-sm text-muted-foreground/70 mt-1">Try a different search term</p>
+                <p className="text-xs sm:text-sm text-muted-foreground/70 mt-1">Try a different search term</p>
               </div>
             )}
           </div>

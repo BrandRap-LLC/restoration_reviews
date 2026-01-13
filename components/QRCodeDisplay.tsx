@@ -19,22 +19,22 @@ export function QRCodeDisplay({ location }: QRCodeDisplayProps) {
   const qrCodeUrl = generateQRCodeUrl(location.googleReviewUrl);
 
   return (
-    <div className="space-y-4">
-      <div className="bg-slate-50 border border-slate-200 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-foreground mb-4 text-center">
+    <div className="space-y-3 sm:space-y-4">
+      <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-foreground mb-3 sm:mb-4 text-center">
           Scan QR Code to Leave a Review
         </h3>
         <div className="flex justify-center">
           <div className="text-center max-w-xs">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <img src="/images/google-logo.svg" alt="Google" className="w-6 h-6" />
+            <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
+              <img src="/images/google-logo.svg" alt="Google" className="w-5 h-5 sm:w-6 sm:h-6" />
               <p className="text-sm font-semibold text-foreground">Google Review</p>
             </div>
-            <div className="bg-white p-4 rounded-lg border border-slate-200 inline-block mb-4">
+            <div className="bg-white p-3 sm:p-4 rounded-lg border border-slate-200 inline-block mb-3 sm:mb-4">
               <img
                 src={qrCodeUrl}
                 alt="Google Review QR Code"
-                className="w-48 h-48 mx-auto"
+                className="w-32 sm:w-40 md:w-48 h-32 sm:h-40 md:h-48 mx-auto"
                 onError={(e) => {
                   // Fallback: show link if image fails to load
                   const target = e.target as HTMLImageElement;
